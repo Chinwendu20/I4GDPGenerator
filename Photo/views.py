@@ -97,11 +97,11 @@ class PhotoManipulateView(APIView):
 		if serializer.is_valid():
 			Photo_uploaded=request.FILES['file_uploaded']
 			Banner_object=Post.objects.get(Link=slug)
-			width=Banner_object.width
-			height=Banner_object.Height
-			position_x=Banner.Position_x
-			position_y=Banner.Position_y
-			border_radius=Banner.Border_radius
+			width=int(Banner_object.width)
+			height=int(Banner_object.Height)
+			position_x=int(Banner.Position_x)
+			position_y=int(Banner.Position_y)
+			border_radius=int(Banner.Border_radius)
 			Banner=Banner_object.Banner.url
 			urllib.request.urlretrieve(Banner, "Banner")
 			Banner_Image = Image.open(Banner)
