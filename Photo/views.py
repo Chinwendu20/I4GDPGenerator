@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView 
 from django.contrib.auth import get_user_model
 from .models import User
-from .serializers import PostSerializer, Post2Serializer 
+from .serializers import PostSerializer, Post2Serializer, PhotoSerializer
 from django.conf import settings
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -91,32 +91,37 @@ class PostGetCreatorView(APIView):
 
 
 class PhotoManipulateView(APIView):
-	serializer_class=Post2Serializer
+	serializer_class=PhotoSerializer
 	def post(self, request, slug):
 		serializer=self.serializer_class(data=request.data)
 		if serializer.is_valid():
 			Photo_uploaded=request.FILES['file_uploaded']
 			Banner_object=Post.objects.get(Link=slug)
-			width=int(Banner_object.width)
+			width=int(Banner_object.Width)
 			height=int(Banner_object.Height)
-			position_x=int(Banner.Position_x)
-			position_y=int(Banner.Position_y)
-			border_radius=int(Banner.Border_radius)
-			Banner=Banner_object.Banner.url
-			urllib.request.urlretrieve(Banner, "Banner")
-			Banner_Image = Image.open(Banner)
+			position_x=int(Banner_object.Position_x)
+			position_y=int(Banner_object.Position_y)
+			banner=Banner_object.Banner.url
+			urllib.request.urlretrieve(banner, "Banner.jpg")
+			Banner_Image = Image.open("Banner.jpg")
 			Size_of_Uploaded_Photo=(width, height)
-			Photo_uploaded_Image = Image.open("ProfilePicture.jpg").resize((Size_of_Uploaded_Photo))
+			Photo_uploaded_Image = Image.open(Photo_uploaded).resize((Size_of_Uploaded_Photo))
+			try:
+				border_radius=int(Banner_object.Border_radius)
+			except:
+				border_radius=""
 			if border_radius:
+				border_radius=int(Banner_object.Border_radius)
 				mask = Image.new("L", black_mask.size, 0)
 				draw = ImageDraw.Draw(mask)
 				draw.rounded_rectangle([0,0, width, height], radius=border_radius, fill=255)
-				Banner.paste(Photo_uploaded, (position_x, position_y), mask)
-				upload_data = cloudinary.uploader.upload(Banner)
+				Banner_Image.paste(Photo_uploaded, (position_x, position_y), mask)
+				upload_data = cloudinary.uploader.upload(Banner_Image)
 			else:
 
-				Banner.paste(Photo_uploaded_Image, (position_x, position_y))
-				upload_data = cloudinary.uploader.upload(Banner)
+				Banner_Image.paste(Photo_uploaded_Image, (position_x, position_y))
+				Banner_Image.save('temp.jpg')
+				upload_data = cloudinary.uploader.upload('temp.jpg')
 			return Response({'Image': upload_data}, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

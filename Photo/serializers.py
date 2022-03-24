@@ -35,3 +35,6 @@ class Post2Serializer(serializers.ModelSerializer):
 		model=Post
 		exclude = ('session',)
 
+class PhotoSerializer(serializers.Serializer):
+	file_uploaded=serializers.FileField(validators=[FileExtensionValidator(allowed_extensions=['jpg','jpeg','png'])])
+
