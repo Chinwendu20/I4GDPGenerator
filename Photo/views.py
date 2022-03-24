@@ -21,10 +21,11 @@ class PostView(APIView):
 	def post(self, request, format=None):
 		serializer=self.serializer_class(data=request.data)
 		if serializer.is_valid():
-			print(request.session.session_key)
+			print(request.session)
 			print(request.user)
 			serializer.validated_data['Banner']=serializer.validated_data['file_uploaded']
 			del serializer.validated_data['file_uploaded']
+			serializer.validated_data['session']=Session.objects.get(pk=request.session.session_key)
 			user_data=Post.objects.create(**serializer.validated_data)
 			content={'Banner': user_data.Banner.url, 'Link': user_data.Link, 'Height': user_data.Height, 'Width': user_data.Width, 
 			'Position_x': user_data.Position_x, 'Position_y': user_data.Position_y, 'Border_radius': user_data.Border_radius, 
@@ -58,11 +59,6 @@ class PostUpdateDestroyView(APIView):
 		Post = self.get_object(pk)
 		Post.delete()
 		return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-
-
-
 
 class PostGetUserView(APIView):
 	serializer_class=Post2Serializer
