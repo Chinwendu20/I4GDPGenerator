@@ -1,0 +1,1 @@
+web: gunicorn ayaloconfig.wsgi --log-file - --timeout=30
