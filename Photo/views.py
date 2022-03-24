@@ -38,11 +38,16 @@ class PostView(APIView):
 
 
 class PostUpdateDestroyView(APIView):
-	serializer_class=PostSerializer
-	def put(self, request, format=None):
-		pk=request.GET['id']
-		Post = self.get_object(pk)
-		serializer = self.serializer_class(Post, data=request.data)
+	serializer_class=Post2Serializer
+	def put(self, request, id, format=None):
+		# print(request.POST)
+		# pk=request.POST['id']
+		print(request.data)
+		print(self.serializer_class(data=request.data))
+		key=request.session.session_key
+		sess=Session.objects.get(pk=key)
+		post = Post.objects.filter(session=sess).filter(id=id)
+		serializer = self.serializer_class(post[0], data=request.data)
 		if serializer.is_valid():
 			user_data=serializer.save()
 			content={'Banner': user_data.Banner.url, 'Link': user_data.Link, 'Height': user_data.Height, 'Width': user_data.Width, 
@@ -54,10 +59,11 @@ class PostUpdateDestroyView(APIView):
 			return Response(content, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-	def delete(self, request, format=None):
-		pk=request.GET['id']
-		Post = self.get_object(pk)
-		Post.delete()
+	def delete(self, request,id, format=None):
+		key=request.session.session_key
+		sess=Session.objects.get(pk=key)
+		post = Post.objects.filter(session=sess).filter(id=id)
+		post[0].delete()
 		return Response(status=status.HTTP_204_NO_CONTENT)
 
 class PostGetUserView(APIView):
