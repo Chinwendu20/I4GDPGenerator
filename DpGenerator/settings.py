@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Photo',
     'cloudinary',
+    'corsheaders',
     'authentication',
     'rest_framework'
 ]
@@ -59,6 +60,7 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'authentication.User'
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -70,6 +72,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'DpGenerator.urls'
+
+CORS_ALLOW_ALL_ORIGINS=True
 
 TEMPLATES = [
     {
