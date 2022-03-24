@@ -12,6 +12,6 @@ urlpatterns = [
     path('<slug:slug>/', PostGetUserView.as_view()),
     path('view/post/', PostGetCreatorView.as_view()),
     path('make/dp/', PhotoManipulateView .as_view()),
-    path('/modify/<int:id>/', PostUpdateDestroyView.as_view())
+    path('modify/<int:id>/', PostUpdateDestroyView.as_view())
 
 ]
