@@ -1,1 +1,1 @@
-web: gunicorn ayaloconfig.wsgi --log-file - --timeout=30
+web: gunicorn DpGenerator.wsgi --log-file - --timeout=30
