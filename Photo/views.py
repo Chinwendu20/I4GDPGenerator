@@ -95,12 +95,20 @@ class PostGetCreatorView(APIView):
 		try:
 			session=Session.objects.get(pk=request.session.session_key)
 			post = Post.objects.filter(session=session)
+			qs=[]
+			for user_data in post:
+				content={'Banner': user_data.Banner.url, 'Link': user_data.Link, 'Height': user_data.Height, 'Width': user_data.Width, 
+				'Position_x': user_data.Position_x, 'Position_y': user_data.Position_y, 'Border_radius': user_data.Border_radius, 
+				'Name': user_data.Name, 'Description':user_data.Description} 
+				qs.append(content)
+			# 	post.Banner=post.Banner.url
+			# 	post.save()
 			serializer = self.serializer_class(post, many=True)
 		except Session.DoesNotExist:
 			serializer=None
 			return Response(serializer, status=status.HTTP_204_NO_CONTENT)
 
-		return Response(serializer.data, status=status.HTTP_200_OK)
+		return Response(qs, status=status.HTTP_200_OK)
 
 
 class PhotoManipulateView(APIView):
