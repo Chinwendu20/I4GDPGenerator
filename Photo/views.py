@@ -78,12 +78,15 @@ class PostGetUserView(APIView):
 	parser_classes = (MultiPartParser,)
 	def get (self, request, slug, format=None):
 		try:
-			post = Post.objects.get(Link=slug)
-			serializer = self.serializer_class(post)
+			user_data = Post.objects.get(Link=slug)
+			serializer = self.serializer_class(user_data)
 		except Post.DoesNotExist:
 			return Response(status=status.HTTP_204_NO_CONTENT)
-
-		return Response(serializer.data, status=status.HTTP_200_OK)
+		
+		content={'Banner': user_data.Banner.url, 'Link': user_data.Link, 'Height': user_data.Height, 'Width': user_data.Width, 
+		'Position_x': user_data.Position_x, 'Position_y': user_data.Position_y, 'Border_radius': user_data.Border_radius, 
+		'Name': user_data.Name, 'Description':user_data.Description}
+		return Response(content, status=status.HTTP_200_OK)
 
 class PostGetCreatorView(APIView):
 	serializer_class=Post2Serializer
