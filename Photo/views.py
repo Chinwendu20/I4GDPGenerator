@@ -12,12 +12,16 @@ from PIL import Image,ImageDraw
 import urllib.request
 from .models import Post
 from django.contrib.sessions.models import Session
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.parsers import FileUploadParser, MultiPartParser, FormParser
 # Create your views here.
 
 
 
 class PostView(APIView):
 	serializer_class=PostSerializer
+	parser_classes = (MultiPartParser,)
+	@swagger_auto_schema(request_body=PostSerializer)
 	def post(self, request, format=None):
 		serializer=self.serializer_class(data=request.data)
 		if serializer.is_valid():
@@ -40,6 +44,8 @@ class PostView(APIView):
 
 class PostUpdateDestroyView(APIView):
 	serializer_class=Post2Serializer
+	parser_classes = (MultiPartParser,)
+	@swagger_auto_schema(request_body=Post2Serializer)
 	def put(self, request, id, format=None):
 		# print(request.POST)
 		# pk=request.POST['id']
@@ -69,6 +75,7 @@ class PostUpdateDestroyView(APIView):
 
 class PostGetUserView(APIView):
 	serializer_class=Post2Serializer
+	parser_classes = (MultiPartParser,)
 	def get (self, request, slug, format=None):
 		try:
 			post = Post.objects.get(Link=slug)
@@ -80,7 +87,7 @@ class PostGetUserView(APIView):
 
 class PostGetCreatorView(APIView):
 	serializer_class=Post2Serializer
-
+	parser_classes = (MultiPartParser,)
 	def get(self, request, format=None):
 		try:
 			session=Session.objects.get(pk=request.session.session_key)
@@ -95,6 +102,8 @@ class PostGetCreatorView(APIView):
 
 class PhotoManipulateView(APIView):
 	serializer_class=PhotoSerializer
+	parser_classes = (MultiPartParser,)
+	@swagger_auto_schema(request_body=PhotoSerializer)
 	def post(self, request, slug):
 		serializer=self.serializer_class(data=request.data)
 		if serializer.is_valid():
