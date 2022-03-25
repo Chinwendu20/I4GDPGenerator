@@ -25,6 +25,7 @@ class PostView(APIView):
 			print(request.user)
 			serializer.validated_data['Banner']=serializer.validated_data['file_uploaded']
 			del serializer.validated_data['file_uploaded']
+			request.session.create()
 			serializer.validated_data['session']=Session.objects.get(pk=request.session.session_key)
 			user_data=Post.objects.create(**serializer.validated_data)
 			content={'Banner': user_data.Banner.url, 'Link': user_data.Link, 'Height': user_data.Height, 'Width': user_data.Width, 
