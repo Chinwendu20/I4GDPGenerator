@@ -125,8 +125,10 @@ class PhotoManipulateView(APIView):
 			position_x=int(Banner_object.Position_x)
 			position_y=int(Banner_object.Position_y)
 			banner=Banner_object.Banner.url
-			urllib.request.urlretrieve(banner, "Banner.jpg")
-			Banner_Image = Image.open("Banner.jpg")
+			format_=Banner_object.Banner.format
+			image_name= "Banner.{}".format(format_)
+			urllib.request.urlretrieve(banner, image_name)
+			Banner_Image = Image.open(image_name)
 			Size_of_Uploaded_Photo=(width, height)
 			Photo_uploaded_Image = Image.open(Photo_uploaded).resize((Size_of_Uploaded_Photo))
 			try:
@@ -139,12 +141,12 @@ class PhotoManipulateView(APIView):
 				draw = ImageDraw.Draw(mask)
 				draw.rounded_rectangle([0,0, width, height], radius=border_radius, fill=255)
 				Banner_Image.paste(Photo_uploaded, (position_x, position_y), mask)
-				upload_data = cloudinary.uploader.upload(Banner_Image)
 			else:
 
 				Banner_Image.paste(Photo_uploaded_Image, (position_x, position_y))
-				Banner_Image.save('temp.jpg')
-				upload_data = cloudinary.uploader.upload('temp.jpg')
+				print(Photo_uploaded)
+				Banner_Image.save('{}'.format(Photo_uploaded))
+				upload_data = cloudinary.uploader.upload('{}'.format(Photo_uploaded))
 			return Response({'Image': upload_data}, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
