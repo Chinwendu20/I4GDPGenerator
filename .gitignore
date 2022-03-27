@@ -5,14 +5,12 @@ venv
 .vscode
 console.py
 ./DpGenerator/dbsqlite3
-*.jpg
-*.jpeg
-*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+
 
 # C extensions
 *.so
