@@ -1,5 +1,3 @@
-
-
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
@@ -19,24 +17,22 @@ This is a rest api for generating customized DP's for events. Just like [getdp.c
 |---------------------|-------------------------------|
 |post/                |This creates the campaign.     |
 |view/post/           |This returns the json of data created by a user on a browser. All the post created on a browser are returned as users are identified by session
-id's                  |
-|modify/<id>/         |This works with two http verbs, 'put' for modification, 'delete' to delete a post. An authorization measure was put as we are working with anonymous users such that one can only deleted posts created in a particular browser otherwise there is an error.|
-|<slug>/              | This is the custom url created by campaign creators to share with users to create their custom dp|
-|make/dp/<slug>       | This is where the magic happens. This creates the custom dp. There is support for a circular , rounded rectangle or rectangular selected area|
+                        id's. |                 
+|modify/{id}/         |This works with two http verbs, 'put' for modification, 'delete' to delete a post. An authorization measure was put as we are working with                              anonymous users such that one can only deleted posts created in a particular browser otherwise there is an error.|
+|{slug}/              | This is the custom url created by campaign creators to share with users to create their custom dp.|
+|make/dp/{slug}       | This is where the magic happens. This creates the custom dp. There is support for a circular , rounded rectangle or rectangular selected area.|
 
-
-The api was documented using swagger, you can play around with the end points and get more in depth understanding of how it works here:
   
-https://dp-generator-api.herokuapp.com/
+[Play around with the endpoints, API documented with swagger](https://dp-generator-api.herokuapp.com/)
   
 
 
 ## Projects built with this rest API
 
-* Live site - https://dp-generator.vercel.app/
-  Github link - https://github.com/eniolajayi/dp-generator
+* DP Generator by [Eniola Ajayi] (https://www.linkedin.com/in/eniolajayi/?lipi=urn%3Ali%3Apage%3Ad_flagship3_people_connections%3BlVMSj94mQqOtOgHAZnFx6g%3D%3D)
+[Live site](https://dp-generator.vercel.app/) [Github link] (https://github.com/eniolajayi/dp-generator)
   
-  Presentation
+  Presentation embedded in image below:
   [![image](readme-images/desktop.jpg)](https://www.canva.com/design/DAE8EeC_4yI/nomyYurCNbOL_4pR0w6Grg/view?utm_content=DAE8EeC_4yI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton#1)
 
 
