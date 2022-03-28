@@ -5,7 +5,7 @@
 This is a rest api for generating customized DP's for events. Just like [getdp.co](getdp.co).
 
 
-### Technologies used
+## Technologies Used
 
 * [Django rest framework](django-rest-framework.org)
 * [Pillow](https://pillow.readthedocs.io/en/stable/)
