@@ -26,9 +26,8 @@ This is a rest api for generating customized DP's for events. Just like [getdp.c
 
 ## Projects built with this rest API
 
-* DP Generator by [Eniola Ajayi] (https://www.linkedin.com/in/eniolajayi/)
-
-[Live site](https://dp-generator.vercel.app/)| [Github link] (https://github.com/eniolajayi/dp-generator)
+* DP Generator
+  [Live site](https://dp-generator.vercel.app/)| [Github link](https://github.com/eniolajayi/dp-generator)
   
   Presentation embedded in image below:
   [![image](readme-images/desktop.jpg)](https://www.canva.com/design/DAE8EeC_4yI/nomyYurCNbOL_4pR0w6Grg/view?utm_content=DAE8EeC_4yI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton#1)
