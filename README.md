@@ -16,9 +16,9 @@ This is a rest api for generating customized DP's for events. Just like [getdp.c
 |ROUTE                |DESCRIPTION                    |
 |---------------------|-------------------------------|
 |post/                |This creates the campaign.     |
-|view/post/           |This returns the json of data created by a user on a browser. All the post created on a browser are returned as users are identified by session
+|view/post/           |This returns the json of data created by a user on a browser. All the post created on a browser are returned as users are identified by session|
 |                     |id's. |                 
-|modify/{id}/         |This works with two http verbs, 'put' for modification, 'delete' to delete a post. An authorization measure was put as we are working with       |                     |anonymous users such that one can only deleted posts created in a particular browser otherwise there is an error.|
+|modify/{id}/         |This works with two http verbs, 'put' for modification, 'delete' to delete a post. An authorization measure was put as we are working with|       |                     |anonymous users such that one can only deleted posts created in a particular browser otherwise there is an error.|
 |{slug}/              | This is the custom url created by campaign creators to share with users to create their custom dp.|
 |make/dp/{slug}       | This is where the magic happens. This creates the custom dp. There is support for a circular , rounded rectangle or rectangular selected area.|
 
