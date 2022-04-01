@@ -8,7 +8,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 import cloudinary.uploader
-from PIL import Image,ImageDraw
+from PIL import Image,ImageDraw,ImageFont
 import urllib.request
 from .models import Post
 from django.contrib.sessions.models import Session
@@ -119,16 +119,19 @@ class PhotoManipulateView(APIView):
 		serializer=self.serializer_class(data=request.data)
 		if serializer.is_valid():
 			Photo_uploaded=request.FILES['file_uploaded']
-			Banner_object=Post.objects.get(Link=slug)
+			Banner_qs=Post.objects.filter(Link=slug)
+			Banner_object=Banner_qs[0]
 			width=int(Banner_object.Width)
 			height=int(Banner_object.Height)
 			position_x=int(Banner_object.Position_x)
 			position_y=int(Banner_object.Position_y)
+			name=serializer.validated_data['Name']
+			university=serializer.validated_data['University']
 			banner=Banner_object.Banner.url
 			format_=Banner_object.Banner.format
 			image_name= "Banner.{}".format(format_)
 			urllib.request.urlretrieve(banner, image_name)
-			Banner_Image = Image.open(image_name)
+			Banner_Image = Image.open(image_name).resize((547, 547))
 			Size_of_Uploaded_Photo=(width, height)
 			Photo_uploaded_Image = Image.open(Photo_uploaded).resize((Size_of_Uploaded_Photo))
 			try:
@@ -137,39 +140,23 @@ class PhotoManipulateView(APIView):
 				border_radius=""
 			if border_radius:
 				border_radius=int(Banner_object.Border_radius)
-				mask = Image.new("L", black_mask.size, 0)
-				draw = ImageDraw.Draw(mask)
-				draw.rounded_rectangle([0,0, width, height], radius=border_radius, fill=255)
-				Banner_Image.paste(Photo_uploaded, (position_x, position_y), mask)
+				maski = Image.new("L", Photo_uploaded_Image.size, 0)
+				draw = ImageDraw.Draw(maski)
+				draw.rounded_rectangle([0,0,width,height], radius=border_radius, fill=255)
+				Banner_Image.paste(Photo_uploaded_Image,box=(position_x, position_y), mask=maski)
 			else:
 
 				Banner_Image.paste(Photo_uploaded_Image, (position_x, position_y))
-				print(Photo_uploaded)
-				Banner_Image.save('{}'.format(Photo_uploaded))
-				upload_data = cloudinary.uploader.upload('{}'.format(Photo_uploaded))
+			draw = ImageDraw.Draw(Banner_Image)
+			font = ImageFont.truetype("font/Effra Bold.ttf", 25)
+			w,h = font.getsize(name)
+			font1 = ImageFont.truetype("font/Effra_Std_Rg.ttf", 16)
+			w1,h1 = font1.getsize(university)
+			img_size=Banner_Image.size
+			draw.text(((547-w)/2,407), name, fill =(255,255,255), font=font)
+			draw.text(((547-w1)/2,440), university, fill =(255,255,255), font=font1)
+			Banner_Image.save('{}.png'.format(Photo_uploaded))
+			upload_data = cloudinary.uploader.upload('{}.png'.format(Photo_uploaded))
 			return Response({'Image': upload_data}, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# class PhotoManipulateCircleView(APIView):
-# 	serializer_class=PostSerializer
-# 	def post(self, request, slug):
-# 		serializer=self.serializer_class(data=request.data)
-# 		if serializer.is_valid():
-# 			Photo_uploaded=request.FILES['file_uploaded']
-# 			Banner=Post.objects.get(Link=slug)
-# 			width=Banner_object.width
-# 			height=Banner_object.Height
-# 			position_x=Banner.Position_x
-# 			position_y=Banner.Position_y
-# 			Banner=Banner_object.Banner
-# 			Banner_Image = Image.open(Banner)
-# 			border_radius=Banner.Border_radius
-# 			Size_of_Uploaded_Photo=(width, height)
-# 			Photo_uploaded_Image = Image.open("ProfilePicture.jpg").resize((Size_of_Uploaded_Photo))
-# 			mask = Image.new("L", black_mask.size, 0)
-# 			draw = ImageDraw.Draw(mask)
-# 			draw.rounded_rectangle([0,0, width, height], radius=border_radius, fill=255)
-# 			Banner.paste(Photo_uploaded, (position_x, position_y), mask)
-# 			upload_data = cloudinary.uploader.upload(Banner)
-#             return Response({'Image': upload_data}, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
