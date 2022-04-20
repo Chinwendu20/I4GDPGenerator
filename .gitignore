@@ -10,6 +10,8 @@ console.py
 __pycache__/
 *.py[cod]
 *$py.class
+Banner.jpg
+HappyFace.jpg.png
 
 
 # C extensions

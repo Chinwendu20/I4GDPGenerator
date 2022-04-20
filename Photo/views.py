@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView 
 from django.contrib.auth import get_user_model
 from .models import User
-from .serializers import PostSerializer, Post2Serializer, PhotoSerializer
+from .serializers import PostSerializer, Post2Serializer, PhotoSerializer, StaxSerializer, StaxLinkSerializer
 from django.conf import settings
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -110,7 +110,6 @@ class PostGetCreatorView(APIView):
 
 		return Response(qs, status=status.HTTP_200_OK)
 
-
 class PhotoManipulateView(APIView):
 	serializer_class=PhotoSerializer
 	parser_classes = (MultiPartParser,)
@@ -119,7 +118,47 @@ class PhotoManipulateView(APIView):
 		serializer=self.serializer_class(data=request.data)
 		if serializer.is_valid():
 			Photo_uploaded=request.FILES['file_uploaded']
-			Banner_qs=Post.objects.filter(Link=slug)
+			Banner_object=Post.objects.get(Link=slug)
+			width=int(Banner_object.Width)
+			height=int(Banner_object.Height)
+			position_x=int(Banner_object.Position_x)
+			position_y=int(Banner_object.Position_y)
+			banner=Banner_object.Banner.url
+			format_=Banner_object.Banner.format
+			image_name= "Banner.{}".format(format_)
+			urllib.request.urlretrieve(banner, image_name)
+			Banner_Image = Image.open(image_name)
+			Size_of_Uploaded_Photo=(width, height)
+			Photo_uploaded_Image = Image.open(Photo_uploaded).resize((Size_of_Uploaded_Photo))
+			try:
+				border_radius=int(Banner_object.Border_radius)
+			except:
+				border_radius=""
+			if border_radius:
+				border_radius=int(Banner_object.Border_radius)
+				mask = Image.new("L", black_mask.size, 0)
+				draw = ImageDraw.Draw(mask)
+				draw.rounded_rectangle([0,0, width, height], radius=border_radius, fill=255)
+				Banner_Image.paste(Photo_uploaded, (position_x, position_y), mask)
+			else:
+
+				Banner_Image.paste(Photo_uploaded_Image, (position_x, position_y))
+				print(Photo_uploaded)
+				Banner_Image.save('{}'.format(Photo_uploaded))
+				upload_data = cloudinary.uploader.upload('{}'.format(Photo_uploaded))
+			return Response({'Image': upload_data}, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StaxMainView(APIView):
+	serializer_class=StaxSerializer
+	parser_classes = (MultiPartParser,)
+	@swagger_auto_schema(request_body=serializer_class)
+	def post(self, request, slug):
+		serializer=self.serializer_class(data=request.data)
+		if serializer.is_valid():
+			Photo_uploaded=request.FILES['file_uploaded']
+			Banner_qs=Post.objects.filter(Link='staxcampus')
 			Banner_object=Banner_qs[0]
 			width=int(Banner_object.Width)
 			height=int(Banner_object.Height)
@@ -134,19 +173,12 @@ class PhotoManipulateView(APIView):
 			Banner_Image = Image.open(image_name).resize((547, 547))
 			Size_of_Uploaded_Photo=(width, height)
 			Photo_uploaded_Image = Image.open(Photo_uploaded).resize((Size_of_Uploaded_Photo))
-			try:
-				border_radius=int(Banner_object.Border_radius)
-			except:
-				border_radius=""
-			if border_radius:
-				border_radius=int(Banner_object.Border_radius)
-				maski = Image.new("L", Photo_uploaded_Image.size, 0)
-				draw = ImageDraw.Draw(maski)
-				draw.rounded_rectangle([0,0,width,height], radius=border_radius, fill=255)
-				Banner_Image.paste(Photo_uploaded_Image,box=(position_x, position_y), mask=maski)
-			else:
-
-				Banner_Image.paste(Photo_uploaded_Image, (position_x, position_y))
+			border_radius=int(Banner_object.Border_radius)
+			border_radius=int(Banner_object.Border_radius)
+			maski = Image.new("L", Photo_uploaded_Image.size, 0)
+			draw = ImageDraw.Draw(maski)
+			draw.rounded_rectangle([0,0,width,height], radius=border_radius, fill=255)
+			Banner_Image.paste(Photo_uploaded_Image,box=(position_x, position_y), mask=maski)
 			draw = ImageDraw.Draw(Banner_Image)
 			font = ImageFont.truetype("font/Effra Bold.ttf", 25)
 			w,h = font.getsize(name)
@@ -160,3 +192,45 @@ class PhotoManipulateView(APIView):
 			return Response({'Image': upload_data}, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class StaxLinkView(APIView):
+	serializer_class=StaxLinkSerializer
+	parser_classes = (MultiPartParser,)
+	@swagger_auto_schema(request_body=serializer_class)
+	def post(self, request):
+		serializer=self.serializer_class(data=request.data)
+		if serializer.is_valid():
+			Photo_uploaded=request.FILES['file_uploaded']
+			Banner_qs=Post.objects.filter(Link='linkStax')
+			Banner_object=Banner_qs[0]
+			width=int(Banner_object.Width)
+			height=int(Banner_object.Height)
+			position_x=int(Banner_object.Position_x)
+			position_y=int(Banner_object.Position_y)
+			name=serializer.validated_data['Name']
+			Link=serializer.validated_data['Link']
+			banner=Banner_object.Banner.url
+			format_=Banner_object.Banner.format
+			image_name= "Banner.{}".format(format_)
+			urllib.request.urlretrieve(banner, image_name)
+			Banner_Image = Image.open(image_name).resize((547, 547))
+			Size_of_Uploaded_Photo=(width, height)
+			Photo_uploaded_Image = Image.open(Photo_uploaded).resize((Size_of_Uploaded_Photo))
+			border_radius=int(Banner_object.Border_radius)
+			border_radius=int(Banner_object.Border_radius)
+			maski = Image.new("L", Photo_uploaded_Image.size, 0)
+			draw = ImageDraw.Draw(maski)
+			draw.rounded_rectangle([0,0,width,height], radius=border_radius, fill=255)
+			Banner_Image.paste(Photo_uploaded_Image,box=(position_x, position_y), mask=maski)
+			draw = ImageDraw.Draw(Banner_Image)
+			font = ImageFont.truetype("font/Effra Bold.ttf", 22)
+			w,h = font.getsize(name)
+			font1 = ImageFont.truetype("font/Effra Bold.ttf", 10)
+			w1,h1 = font1.getsize(Link)
+			img_size=Banner_Image.size
+			draw.text((209, 72), name, fill =(255,255,255), font=font)
+			draw.text(((547-w1)/2,462), Link, fill =(255,255,255), font=font1)
+			Banner_Image.save('{}.png'.format(Photo_uploaded))
+			upload_data = cloudinary.uploader.upload('{}.png'.format(Photo_uploaded))
+			return Response({'Image': upload_data}, status=status.HTTP_201_CREATED)
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

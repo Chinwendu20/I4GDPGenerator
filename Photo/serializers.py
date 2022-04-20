@@ -13,12 +13,9 @@ class PostSerializer(serializers.ModelSerializer):
 
 	def validate_Link(self, value):
 		data=self.get_initial()
-		try:
-			post=Post.objects.get(Link=data.get('Link'))
-		except Post.DoesNotExist:
-			return value
-			
-
+		post=Post.objects.filter(Link=data.get('Link'))
+		if len(post) == 0:
+			return value			
 		raise serializers.ValidationError("Link already in use")
 
 
@@ -37,5 +34,14 @@ class Post2Serializer(serializers.ModelSerializer):
 
 class PhotoSerializer(serializers.Serializer):
 	file_uploaded=serializers.FileField(validators=[FileExtensionValidator(allowed_extensions=['jpg','jpeg','png'])])
+
+class StaxSerializer(serializers.Serializer):
+	file_uploaded=serializers.FileField(validators=[FileExtensionValidator(allowed_extensions=['jpg','jpeg','png'])])
 	Name=serializers.CharField()
 	University=serializers.CharField()
+
+
+class StaxLinkSerializer(serializers.Serializer):
+	file_uploaded=serializers.FileField(validators=[FileExtensionValidator(allowed_extensions=['jpg','jpeg','png'])])
+	Name=serializers.CharField()
+	Link=serializers.CharField()
