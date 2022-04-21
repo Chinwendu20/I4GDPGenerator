@@ -154,7 +154,7 @@ class StaxMainView(APIView):
 	serializer_class=StaxSerializer
 	parser_classes = (MultiPartParser,)
 	@swagger_auto_schema(request_body=serializer_class)
-	def post(self, request, slug):
+	def post(self, request):
 		serializer=self.serializer_class(data=request.data)
 		if serializer.is_valid():
 			Photo_uploaded=request.FILES['file_uploaded']
