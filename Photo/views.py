@@ -192,6 +192,17 @@ class StaxMainView(APIView):
 			return Response({'Image': upload_data}, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+	def get (self, request,format=None):
+		try:
+			user_data = Post.objects.filter(Link='staxcampus')[0]
+			serializer = self.serializer_class(user_data)
+		except Post.DoesNotExist:
+			return Response(status=status.HTTP_204_NO_CONTENT)
+		
+		content={'Banner': user_data.Banner.url, 'Link': user_data.Link, 'Height': user_data.Height, 'Width': user_data.Width, 
+		'Position_x': user_data.Position_x, 'Position_y': user_data.Position_y, 'Border_radius': user_data.Border_radius, 
+		'Name': user_data.Name, 'Description':user_data.Description}
+		return Response(content, status=status.HTTP_200_OK)
 
 class StaxLinkView(APIView):
 	serializer_class=StaxLinkSerializer
@@ -234,3 +245,16 @@ class StaxLinkView(APIView):
 			upload_data = cloudinary.uploader.upload('{}.png'.format(Photo_uploaded))
 			return Response({'Image': upload_data}, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+	def get (self, request, format=None):
+		try:
+			user_data = Post.objects.filter(Link='linkStax')[0]
+			serializer = self.serializer_class(user_data)
+		except Post.DoesNotExist:
+			return Response(status=status.HTTP_204_NO_CONTENT)
+		
+		content={'Banner': user_data.Banner.url, 'Link': user_data.Link, 'Height': user_data.Height, 'Width': user_data.Width, 
+		'Position_x': user_data.Position_x, 'Position_y': user_data.Position_y, 'Border_radius': user_data.Border_radius, 
+		'Name': user_data.Name, 'Description':user_data.Description}
+		return Response(content, status=status.HTTP_200_OK)
